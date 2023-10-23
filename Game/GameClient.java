@@ -86,6 +86,8 @@ public class GameClient {
 			Thread theThread = new Thread(listener);
 			theThread.start();
 
+
+			System.out.println("nnn");
 			// Read input from the keyboard and send it to everyone else.
 			// The only way to quit is to hit control-c, but a quit command
 			// could easily be added.
