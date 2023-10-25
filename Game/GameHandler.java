@@ -1,9 +1,3 @@
-/*
-Tic Tac Toe Game Handler
-
-created by Shevis Johnson
-Oct 21, 2016
-*/
 
 import java.net.*;
 import java.io.*;
@@ -13,24 +7,24 @@ import java.lang.*;
 public class GameHandler implements Runnable {
 
   public Socket connectionSock;
-  public Socket[] socketList;
+  // public Socket[] socketList;
   public TTTInterface game;
   public int playerID;
-  public int pId;
+  public int uid;
 
-  public GameHandler(Socket sock, Socket[] socketList, TTTInterface game, int playerID,int pId) {
+  public GameHandler(Socket sock, TTTInterface game, int playerID, int uid) {
     this.connectionSock = sock;
-    this.socketList = socketList; // Keep reference to master list
     this.game = game;
     this.playerID = playerID;
-    this.pId=pId;
+    this.uid = uid;
   }
 
   public void run() {
     try {
-      // TTTInterface game = new TTTInterface();
 
       BufferedReader playerInput = new BufferedReader(new InputStreamReader(this.connectionSock.getInputStream()));
+
+      System.out.println("GameHndler");
 
       switch (this.playerID) {
         case -1:
@@ -46,12 +40,10 @@ public class GameHandler implements Runnable {
       }
 
       while (this.game.checkWin() == 0) {
-        sendMessage(this.game.printState() + "\r\n");
-        String playerSym = "";
-        int playerIndex = 1;
-        int indexInverse = 0;
+
         if (this.game.playerMove == this.playerID) {
           // my turn
+          // playerInput.readLine();
           sendMessage("Pleaae enter a row (0-2): " + "\r\n");
           String row = playerInput.readLine().trim();
           sendMessage("Pleaae enter a column (0-2): " + "\r\n");
@@ -61,17 +53,20 @@ public class GameHandler implements Runnable {
           } else {
             sendMessage("-" + "\r\n");
           }
+          sendMessage(this.game.printState());
         } else {
           // other player's turn
           sendMessage("Please wait for opponent's move." + "\r\n");
+          // sendMessage(this.game.printState());
           while (this.game.playerMove != this.playerID) {
             Thread.sleep(500);
           }
+          sendMessage("Opponent has moved." + "\r\n");
+          sendMessage(this.game.printState());
+
           sendMessage("+" + "\r\n");
         }
       }
-
-      sendMessage(this.game.printState());
 
       int checkResult = this.game.checkWin();
       sendMessage(Integer.toString(checkResult) + "\r\n");
@@ -82,6 +77,8 @@ public class GameHandler implements Runnable {
       } else {
         sendMessage("GAME OVER! YOU LOSE!" + "\r\n");
       }
+      
+      // gameMap.remove()
     } catch (IOException e) {
       System.out.println(e.getMessage());
     } catch (InterruptedException z) {

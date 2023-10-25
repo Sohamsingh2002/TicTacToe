@@ -1,9 +1,4 @@
-/*
-Tic Tac Toe Game interface
 
-Created by Shevis Johnson
-Oct 21, 2016
-*/
 
 import java.io.*;
 import java.util.*;

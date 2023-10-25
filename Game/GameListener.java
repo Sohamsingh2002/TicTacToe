@@ -1,9 +1,4 @@
-/* Game Listener
 
-created by Shevis Johnson
-Oct 21, 2016
-
-*/
 
 import java.net.Socket;
 import java.io.DataOutputStream;
@@ -83,4 +78,4 @@ public class GameListener implements Runnable {
 		System.out.format("2 %2s |%2s |%2s \n", board[2][0], board[2][1], board[2][2]);
 
 	}
-} // ClientListener for MTClient
+} 
