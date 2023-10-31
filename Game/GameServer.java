@@ -136,11 +136,13 @@ public class GameServer {
 	}
 
 	public static void main(String[] args) {
-		
-		System.out.println("Waiting for player connections on port 7654.");
+		final int PORT = 7654;
 		try{
-			ServerSocket serverSock = new ServerSocket(7654);
-
+			ServerSocket serverSock = new ServerSocket(PORT);
+			InetAddress serverAddress = InetAddress.getLocalHost();
+			System.out.println("Server Started ");
+            System.out.println("Server IP: " + serverAddress.getHostAddress());
+            System.out.println("Server Port: " + PORT);
 			GameServer server = new GameServer();
 			server.getConnection(serverSock);
 			

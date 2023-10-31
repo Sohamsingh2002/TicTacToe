@@ -32,6 +32,7 @@ public class GameHandler implements Runnable {
           sendMessage("-" + "\r\n");
           break;
         case 1:
+          System.out.println("Message has been Sent");
           sendMessage("\nYou are player 'X', you will go first." + "\r\n");
           sendMessage("+" + "\r\n");
           break;
@@ -77,7 +78,7 @@ public class GameHandler implements Runnable {
       } else {
         sendMessage("GAME OVER! YOU LOSE!" + "\r\n");
       }
-      
+
       // gameMap.remove()
     } catch (IOException e) {
       System.out.println(e.getMessage());
@@ -90,7 +91,7 @@ public class GameHandler implements Runnable {
     try {
       DataOutputStream clientOutput = new DataOutputStream(this.connectionSock.getOutputStream());
       clientOutput.writeBytes(message);
-      // System.out.println(message);
+      // System.out.println(message+"=--");
     } catch (IOException e) {
       System.out.println(e.getMessage());
     }
