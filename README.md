@@ -1,7 +1,7 @@
 
-# Multiplayer Tic Tak Toe Game
+# Multiplayer Tic Tac Toe Game
 
-This is Multiplayer TicTakToe game
+This is Multiplayer TicTacToe game
 
 
 ## Compilation 
