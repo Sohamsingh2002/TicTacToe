@@ -1,18 +1,14 @@
 
-
 import java.net.*;
 import java.io.*;
 import java.util.*;
 
-public class GameServer {
+public class Server {
 
 	public HashMap<Integer, Socket> clientSock=new HashMap<>();
-	public HashMap<Integer, TTTInterface> gameMap=new HashMap<>();
+	public HashMap<Integer, gameInterface> gameMap=new HashMap<>();
 	public HashMap<Integer, Vector<Integer>> gamePlayerId=new HashMap<>();
 	public Set<Integer> gameList=new HashSet<>();
-
-
-
 
 	public void getConnection(ServerSocket serverSock) {
 
@@ -26,21 +22,19 @@ public class GameServer {
 				Socket connectionSock = serverSock.accept();
 				clientSock.put(uid,connectionSock);
 
-				BufferedReader playerInput = new BufferedReader(new InputStreamReader(connectionSock.getInputStream()));
-				DataOutputStream clientOutput = new DataOutputStream(connectionSock.getOutputStream());
+				BufferedReader fromClient = new BufferedReader(new InputStreamReader(connectionSock.getInputStream()));
+				DataOutputStream toClient = new DataOutputStream(connectionSock.getOutputStream());
 
-				System.out.println("connection is made");
+				System.out.println("Connection is made");
 
 				boolean b=false;
-				String gameType = playerInput.readLine().trim();
-				TTTInterface game = null;
-				String res="-1\n";
+				String gameType = fromClient.readLine().trim();
+				gameInterface game = null;
+				String res="-1\r\n";
 				int pId=1;
-				
-				System.out.println("Game type - "+gameType);
 
 				if(gameType.equals("n")){
-					game = new TTTInterface();
+					game = new gameInterface();
 					Vector<Integer> v1 = new Vector<>();
 					v1.add(uid);
 
@@ -49,12 +43,10 @@ public class GameServer {
 					gamePlayerId.put(gid,v1);
 
 					res="";
-					res=res+gid+'\n';
-					sendMes(clientOutput, res);
+					res=res+gid+"\r\n";
+					sendMes(toClient, res);
 					b=true;
 					gid++;
-
-					System.out.println("Inside");
 				}
 
 
@@ -70,8 +62,8 @@ public class GameServer {
 						game=gameMap.get(randomElement);
 
 						gameList.remove(randomElement);
-						res=""+randomElement+'\n';
-						sendMes(clientOutput, res);
+						res=""+randomElement+"\r\n";
+						sendMes(toClient, res);
 						pId = -1;
 						b=true;
 					}
@@ -79,12 +71,12 @@ public class GameServer {
 
 				else if(gameType.equals("c")){
 
-					res="yes\n";
-					sendMes(clientOutput, res);
+					res="yes\r\n";
+					sendMes(toClient, res);
 
 					boolean bb=true;
 					if(bb){
-						String gi=playerInput.readLine();
+						String gi=fromClient.readLine();
 						int gd=Integer.parseInt(gi);
 						if(gameMap.get(gd)!=null){
 							gamePlayerId.get(gd).add(uid);
@@ -93,22 +85,22 @@ public class GameServer {
 							pId=-1;
 							b=true;
 							bb=false;
-							res="yes\n";
-							sendMes(clientOutput, res);
+							res="yes\r\n";
+							sendMes(toClient, res);
 						}
 					}
 				}
 				
 				if(b){
-					GameHandler handler = new GameHandler(connectionSock, game, pId,uid);
+					Controllar handler = new Controllar(connectionSock, game, pId,uid);
 					Thread theThread = new Thread(handler);
 					theThread.start();
 
 				}
 				else{
-					res="-1\n";
+					res="-1\r\n";
 					try{
-						clientOutput.writeBytes(res);
+						toClient.writeBytes(res);
 					}
 					catch (IOException e) {
 						System.out.println(e.getMessage());
@@ -126,9 +118,9 @@ public class GameServer {
 	}
 	
 	
-	public void sendMes(DataOutputStream clientOutput,String res){
+	public void sendMes(DataOutputStream toClient,String res){
 		try{
-			clientOutput.writeBytes(res);
+			toClient.writeBytes(res);
 		}
 		catch (IOException e) {
 			System.out.println(e.getMessage());
@@ -136,14 +128,14 @@ public class GameServer {
 	}
 
 	public static void main(String[] args) {
-		final int PORT = 7654;
+		final int PORT = 10000;
 		try{
 			ServerSocket serverSock = new ServerSocket(PORT);
 			InetAddress serverAddress = InetAddress.getLocalHost();
 			System.out.println("Server Started ");
             System.out.println("Server IP: " + serverAddress.getHostAddress());
             System.out.println("Server Port: " + PORT);
-			GameServer server = new GameServer();
+			Server server = new Server();
 			server.getConnection(serverSock);
 			
 		}
